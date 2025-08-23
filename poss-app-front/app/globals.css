@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* app/globals.css */
+.barcode-input {
+  font-size: 1.2em !important;
+  padding: 10px !important;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+
+.total-section {
+  background-color: #f8f9fa !important;
+  padding: 20px !important;
+  border-radius: 5px !important;
+  margin-top: 20px !important;
+}
+
+.product-item {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px 0;
+}
+
+.auth-section {
+  background-color: #e3f2fd;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
