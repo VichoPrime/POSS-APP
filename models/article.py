@@ -29,6 +29,10 @@ class Article(db.Model):
     image_url = db.Column(db.String(500))
     activo = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    min_stock = db.Column(db.Integer, default=0)          # Stock mínimo para alertas
+    unidad_medida = db.Column(db.String(50), default="unidad") # ej. unidad, kg, litro
+    status = db.Column(db.String(50), default='activo')   # activo | vencido | dañado
+
     
     # Las relaciones ya están definidas con backref en Category y SaleItem
     
