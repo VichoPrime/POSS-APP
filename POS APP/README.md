@@ -39,7 +39,7 @@ Sistema de punto de venta completo desarrollado con Flask (backend) y Next.js (f
 ### Paso 1: Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/pos-app.git
+git clone https://github.com/VichoPrime/POSS-APP.git
 cd pos-app
 ```
 
