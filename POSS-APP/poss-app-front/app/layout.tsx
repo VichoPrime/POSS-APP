@@ -1,0 +1,35 @@
+import type { Metadata } from "next";
+import { Providers } from "./providers";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Sistema POS",
+  description: "Sistema de punto de venta",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="es">
+      <head>
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+          async
+        ></script>
+        <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  );
+}

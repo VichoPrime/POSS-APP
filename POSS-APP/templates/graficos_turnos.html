@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gráficos de Turnos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div style="width: 800px; margin: auto;">
+        <canvas id="ventasChart"></canvas>
+    </div>
+    <div style="width: 800px; margin: auto; margin-top: 50px;">
+        <canvas id="cantidadChart"></canvas>
+    </div>
+    <script>
+        // Los datos vendrán de la API
+        const data = JSON.parse('{{ data|tojson|safe }}');
+        
+        // Gráfico de Ventas por Período
+        new Chart(document.getElementById('ventasChart'), {
+            type: 'line',
+            data: {
+                labels: data.ventas.labels,
+                datasets: [{
+                    label: 'Ventas Totales',
+                    data: data.ventas.data,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Ventas por Período'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Monto ($)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Fecha'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Cantidad Vendida por Período
+        new Chart(document.getElementById('cantidadChart'), {
+            type: 'bar',
+            data: {
+                labels: data.cantidad.labels,
+                datasets: [{
+                    label: 'Cantidad Vendida',
+                    data: data.cantidad.data,
+                    backgroundColor: 'rgb(153, 102, 255)',
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Cantidad Vendida por Período'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Cantidad (unidades/kg)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Fecha'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

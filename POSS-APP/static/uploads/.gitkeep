@@ -1,0 +1,2 @@
+# Este archivo mantiene la carpeta uploads en el repositorio
+# Las imágenes subidas serán ignoradas por git, pero la carpeta debe existir

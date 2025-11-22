@@ -1,0 +1,242 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+import { Line, Bar } from 'react-chartjs-2';
+import Spinner from 'react-bootstrap/Spinner';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import api from '@/services/api';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+interface GraficosModalProps {
+  isOpen: boolean;
+  fechaInicio?: string;
+  fechaFin?: string;
+  onClose: () => void;
+}
+
+interface GraficoData {
+  labels: string[];
+  data: number[];
+}
+
+interface DatosGraficos {
+  ventas: GraficoData;
+  cantidad: GraficoData;
+}
+
+export default function GraficosModal({ isOpen, fechaInicio, fechaFin, onClose }: GraficosModalProps) {
+  const [datosGraficos, setDatosGraficos] = useState<DatosGraficos | null>(null);
+  const [tipoGrafico, setTipoGrafico] = useState<'ventas' | 'cantidad'>('ventas');
+  const [loading, setLoading] = useState(true);
+
+  // Manejar el scroll cuando el modal se abre/cierra
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const cargarDatos = async () => {
+      if (!isOpen) return;
+      
+      setLoading(true);
+      try {
+        console.log('Cargando datos con fechas:', { fechaInicio, fechaFin });
+        
+        const params: Record<string, string> = {};
+        if (fechaInicio) params.fecha_inicio = fechaInicio;
+        if (fechaFin) params.fecha_fin = fechaFin;
+        
+        const response = await api.get('/turnos-graficos', { params });
+        console.log('Datos recibidos:', response.data);
+        
+        if (!response.data.ventas || !response.data.cantidad) {
+          throw new Error('Formato de datos inválido');
+        }
+        
+        setDatosGraficos(response.data);
+      } catch (error: any) {
+        console.error('Error cargando datos para gráficos:', error);
+        const mensaje = error.response?.data?.error || 'Error al cargar los datos para los gráficos';
+        alert(mensaje);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarDatos();
+  }, [isOpen, fechaInicio, fechaFin]);
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: tipoGrafico === 'ventas' ? 'Ventas por Periodo' : 'Cantidades Vendidas por Periodo',
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: tipoGrafico === 'ventas' ? 'Monto ($)' : 'Unidades',
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Fecha/Hora',
+        },
+      },
+    },
+  };
+
+  const graficoVentas = {
+    labels: datosGraficos?.ventas.labels || [],
+    datasets: [
+      {
+        label: 'Ventas Totales',
+        data: datosGraficos?.ventas.data || [],
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        tension: 0.1,
+      },
+    ],
+  };
+
+  const opcionesComunes = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: tipoGrafico === 'ventas' ? 'Ventas por Periodo' : 'Cantidades Vendidas por Periodo',
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: tipoGrafico === 'ventas' ? 'Monto ($)' : 'Unidades',
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Fecha',
+        },
+        grid: {
+          display: false,
+        },
+      },
+    },
+    elements: {
+      line: {
+        tension: 0.3, // hace las líneas más suaves
+      },
+      point: {
+        radius: 4, // tamaño de los puntos
+        hitRadius: 10, // área de interacción
+        hoverRadius: 6, // tamaño al pasar el mouse
+      },
+    },
+  };
+
+  return (
+    <Modal 
+      show={isOpen} 
+      onHide={onClose} 
+      size="lg" 
+      centered
+      scrollable
+      style={{ zIndex: 1050 }}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Gráficos de Ventas</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="mb-4">
+          <div className="btn-group w-100">
+            <Button
+              variant={tipoGrafico === 'ventas' ? 'primary' : 'secondary'}
+              onClick={() => setTipoGrafico('ventas')}
+            >
+              Ventas por Período
+            </Button>
+            <Button
+              variant={tipoGrafico === 'cantidad' ? 'primary' : 'secondary'}
+              onClick={() => setTipoGrafico('cantidad')}
+            >
+              Cantidad Vendida
+            </Button>
+          </div>
+        </div>
+
+        <div style={{ height: '400px', width: '100%' }}>
+          {loading ? (
+            <div className="d-flex justify-content-center align-items-center h-100">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </Spinner>
+            </div>
+          ) : datosGraficos ? (
+            <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+              <Line 
+                options={{ ...opcionesComunes, maintainAspectRatio: false }} 
+                data={tipoGrafico === 'ventas' ? graficoVentas : {
+                  labels: datosGraficos?.cantidad?.labels || [],
+                  datasets: [{
+                    label: 'Cantidad Vendida (unidades/kg)',
+                    data: datosGraficos?.cantidad?.data || [],
+                    borderColor: 'rgb(153, 102, 255)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.5)',
+                    tension: 0.1,
+                  }],
+                }} 
+              />
+            </div>
+          ) : (
+            <div className="d-flex justify-content-center align-items-center h-100 text-muted">
+              No hay datos disponibles para mostrar
+            </div>
+          )}
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
+}
