@@ -835,12 +835,23 @@ def update_article(id):
 @app.route('/articles/<int:id>', methods=['DELETE'])
 @permission_required('can_manage_products')
 def delete_article(id):
-    article = Article.query.get_or_404(id)
-    db.session.delete(article)
-    db.session.commit()
-    return jsonify({
-        'message': f'Articulo eliminado con exito, se elimino {article.title}'
-    }), 200
+    try:
+        article = db.session.get(Article, id)
+        if not article:
+            return jsonify({'error': 'Producto no encontrado'}), 404
+        
+        # No eliminar, solo marcar como inactivo para mantener integridad referencial
+        article.activo = False
+        db.session.commit()
+        
+        return jsonify({
+            'message': f'Producto "{article.title}" marcado como inactivo correctamente'
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'error': f'Error al desactivar el producto: {str(e)}'
+        }), 500
 
 @app.route('/article/<int:article_id>', methods=['GET'])
 def view_article(article_id):

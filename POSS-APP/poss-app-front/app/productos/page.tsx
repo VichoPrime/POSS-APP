@@ -244,12 +244,13 @@ export default function ProductManagementPage() {
     if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
 
     try {
-      await api.delete(`/articles/${productId}`);
-      alert('Producto eliminado exitosamente');
+      const response = await api.delete(`/articles/${productId}`);
+      alert(response.data.message || 'Producto desactivado correctamente');
       await loadProducts();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting product:', error);
-      alert('Error al eliminar producto');
+      const errorMessage = error.response?.data?.error || 'Error al eliminar producto';
+      alert(errorMessage);
     }
   };
 

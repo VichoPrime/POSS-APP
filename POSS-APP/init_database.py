@@ -19,6 +19,12 @@ def init_database():
     """
     print("🚀 Inicializando base de datos del Sistema POS...")
     
+    # Crear el directorio instance si no existe
+    instance_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance')
+    if not os.path.exists(instance_path):
+        print("📁 Creando directorio 'instance'...")
+        os.makedirs(instance_path)
+    
     with app.app_context():
         # Crear todas las tablas
         print("📊 Creando tablas de base de datos...")

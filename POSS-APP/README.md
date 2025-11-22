@@ -118,7 +118,7 @@ npm run dev
 - **Backend (API):** http://localhost:5000
 
 ### Credenciales por Defecto
-- **Usuario:** `admin@pos.com`
+- **Usuario:** `admin`
 - **Contraseña:** `123456`
 
 > ⚠️ **Importante:** Cambia estas credenciales después de la primera instalación
@@ -233,10 +233,11 @@ Accede con las credenciales por defecto y cambia la contraseña inmediatamente d
 - Verifica que el backend esté en el puerto 5000
 - Revisa la configuración de CORS en `app.py`
 
-### La base de datos no se crea
-- Ejecuta `init_database.bat` o `python init_database.py`
+### La base de datos no se crea ("unable to open database file")
+- Asegúrate de ejecutar `init_database.bat` desde el directorio raíz del proyecto
 - Verifica que tienes permisos de escritura en la carpeta
-- Elimina la carpeta `instance` si existe y vuelve a inicializar
+- Si el error persiste, crea manualmente la carpeta `instance` en la raíz del proyecto
+- En caso de error, elimina la carpeta `instance` si existe y vuelve a inicializar
 
 ## 🚀 Despliegue en Producción
 
@@ -270,6 +271,7 @@ Este proyecto es de código abierto y está disponible bajo la licencia MIT.
 
 **VichoPrime**
 - GitHub: [@VichoPrime](https://github.com/VichoPrime)
+
 **naiki919**
 - GitHub: [@naiki919](https://github.com/naiki919)
 
